@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Invitación</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #ae6565;
+    }
+
+    .card {
+      position: relative;
+      width: 90vw;
+      height: 90vh;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #a533e7;
+      box-shadow: 0 0 30px rgb(193, 248, 14);
+      perspective: 1000px;
+    }
+
+
+
+    /* CONTENIDO INTERNO */
+    .content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      z-index: 2;
+      opacity: 0;
+      transition: 1s;
+    }
+
+    .content.show {
+      opacity: 1;
+    }
+    .sticker {
+  position: absolute;
+  width: 500px;
+  pointer-events: none;
+  opacity: 0;
+  transition: 1s;
+  transform: scale(0);
+}
+
+.s1 {
+  bottom: 10px;
+  left: 10px;
+}
+
+.s2 {
+  bottom: 10px;
+  right: 10px;
+}
+
+.ball {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-image: url('anadidos/pelota.png'); 
+  background-size: cover;
+  border-radius: 50%;
+  top: 10%;
+  left: 10%;
+  animation: bounce 8s infinite ease-in-out;
+}
+
+.content.show .sticker {
+  opacity: 1;
+  transform: scale(1);
+}
+
+    /* PUERTAS */
+    .door {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      background: url('anadidos/puertas.gif');
+      background-size: cover;
+      background-position: center;
+      z-index: 3;
+      transition: 1s;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .left-door {
+      left: 0;
+      transform-origin: left;
+    }
+
+    .right-door {
+      right: 0;
+      transform-origin: center;
+      transform: scaleX(-1);
+    }
+
+    .open .left-door {
+      transform: rotateY(180deg);
+    }
+
+    .open .right-door {
+      transform: scaleX(-1) rotateY(280deg);
+    }
+
+    .center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  z-index: 4; /* encima de las puertas */
+  pointer-events: none;
+}
+
+    /* BOTÓN */
+    .btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      background: #ff4081;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 4;
+    }
+
+    .center-text {
+  transition: 0.5s;
+}
+
+.open .center-text {
+  opacity: 0;
+}
+
+    .btn:hover {
+      background: #e73370;
+    }
+
+
+
+  </style>
+</head>
+<body>
+
+<div class="card" id="card">
+
+  <!-- CONTENIDO -->
+  <div class="content" id="content">
+    <h1 style="font-size:50px;">JAMG POOL PARTY</h1>
+    <br>
+    <br><p>Dia:</p><h2>Sabado, 2 de Abril</h2>
+    <br>
+    <p>Hora:</p><h2>2:30 PM</h2>
+    <br>
+    <p>Lugar:</p><h2>Mi Domicilio</h2>
+    <div style="position: fixed; bottom: 50px;">
+    <p>dress code:<span style="font-size: 15px;"><strong>&nbsp;mood playero (colores blanco, beige, jean)</strong></span></p>
+    </div>
+
+    <audio id="musica" loop>
+  <source src="anadidos/music22.mp3" type="audio/mpeg">
+</audio>
+  
+
+  <!-- STICKERS -->
+  <img src="anadidos/s2.png" class="sticker s1">
+  <img src="anadidos/s1.png" class="sticker s2">
+  <div class="ball"></div>
+
+</div>
+  <!-- PUERTAS -->
+  <div class="door left-door"></div>
+  <div class="door right-door"></div>
+  <div class="center-text"><h1> &nbsp;POOL    &nbsp;PARTY</h1></div>
+
+  <!-- BOTÓN -->
+  <button id="btn" class="btn" onclick="openDoors()">Abrir Invitación</button>
+
+</div>
+
+<script>
+  function openDoors() {
+    const card = document.getElementById('card');
+    const content = document.getElementById('content');
+    const btn = document.getElementById('btn');
+    const musica = document.getElementById('musica');
+
+    btn.style.display = 'none';
+
+    card.classList.add('open');
+    musica.volume = 0;
+musica.play();
+
+let v = 0;
+const fade = setInterval(() => {
+  if (v < 0.5) {
+    v += 0.05;
+    musica.volume = v;
+  } else {
+    clearInterval(fade);
+  }
+}, 200);
+
+    setTimeout(() => {
+      content.classList.add('show');
+    }, 800);
+  }
+</script>
+<script>
+  const ball = document.querySelector('.ball');
+  let posX = 10;
+  let posY = 10;
+  let velX = 3;
+  let velY = 3;
+
+  function moveBall() {
+    const card = document.querySelector('.card');
+    const cardWidth = card.clientWidth;
+    const cardHeight = card.clientHeight;
+    const ballSize = 60;
+
+    posX += velX;
+    posY += velY;
+
+    if (posX <= 0 || posX + ballSize >= cardWidth) {
+      velX = -velX;
+    }
+
+    if (posY <= 0 || posY + ballSize >= cardHeight) {
+      velY = -velY;
+    }
+
+    ball.style.left = posX + 'px';
+    ball.style.top = posY + 'px';
+  }
+
+  setInterval(moveBall, 20);
+</script>
+</body>
+</html>
